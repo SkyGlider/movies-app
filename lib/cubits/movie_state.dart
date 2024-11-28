@@ -1,30 +1,26 @@
 part of 'movie_cubit.dart';
 
 abstract class MovieState extends Equatable {
-  const MovieState();
+  final List<String> posters;
+  final String errorMessage;
+  const MovieState(this.posters, this.errorMessage);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [posters, errorMessage];
 }
 
-class MovieInitial extends MovieState {}
+class MovieInitial extends MovieState {
+  const MovieInitial() : super(const [], '');
+}
 
-class MovieLoading extends MovieState {}
+class MovieLoading extends MovieState {
+  const MovieLoading() : super(const [], '');
+}
 
 class MovieLoaded extends MovieState {
-  final List<String> posters;
-
-  const MovieLoaded(this.posters);
-
-  @override
-  List<Object?> get props => posters;
+  const MovieLoaded(List<String> posters) : super(posters, '');
 }
 
 class MovieError extends MovieState {
-  final String message;
-
-  const MovieError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  const MovieError(String errorMessage) : super(const [], errorMessage);
 }

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class TMDbService {
+class MovieRepository {
   static const String _apiKey =
-      '6489ad683fc50d1640cb90873c5343f9'; // Replace with your TMDb API Key
+      '6489ad683fc50d1640cb90873c5343f9'; // TMDB API Key
   static const String _baseUrl = 'https://api.themoviedb.org/3';
 
-  // Fetch list of popular movies
+  // GET Request
   Future<List<String>> fetchMoviePosters(int page) async {
     final url =
         Uri.parse('$_baseUrl/movie/popular?api_key=$_apiKey&page=$page');

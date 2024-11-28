@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:movies/cubits/movie_cubit.dart';
+import 'package:movies/infrastructure/movie_repository.dart';
 
-import 'cubits/movie_cubit.dart';
-import 'infrastructure/movie_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: BlocProvider(
-        create: (_) => MovieCubit(TMDbService()),
+        create: (_) => MovieCubit(MovieRepository()),
         child: MovieListScreen(),
       ),
     );
@@ -38,14 +38,11 @@ class _MovieListScreenState extends State<MovieListScreen> {
     super.initState();
     _scrollController = ScrollController();
 
-    // Fetch the initial list of movies
     context.read<MovieCubit>().fetchMovies();
 
-    // Listen for the scroll position to load more data
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        // Fetch more movies when scrolled to the bottom
         context.read<MovieCubit>().fetchMovies(loadMore: true);
       }
     });
@@ -70,37 +67,43 @@ class _MovieListScreenState extends State<MovieListScreen> {
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<MovieCubit, MovieState>(
           builder: (context, state) {
-            if (state is MovieLoading && state.props.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
+            if (state is MovieInitial || (state is MovieLoading && state.posters.isEmpty)) {
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 0.7,
+                ),
+                itemCount: 15,
+                itemBuilder: (context, index) {
+                  return const Card(
+                    elevation: 8.0,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                },
+              );
             } else if (state is MovieError) {
-              return Center(child: Text(state.message));
+              return Center(child: Text(state.errorMessage));
             } else if (state is MovieLoaded) {
               return GridView.builder(
                 controller: _scrollController,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 columns
-                  crossAxisSpacing: 8.0, // Horizontal spacing between columns
-                  mainAxisSpacing: 8.0, // Vertical spacing between rows
-                  childAspectRatio:
-                      0.7, // Adjust aspect ratio to make the images look good
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  childAspectRatio: 0.7,
                 ),
-                itemCount:
-                    state.posters.length + 1, // Add 1 for the loading indicator
+                itemCount: state.posters.length + 1,
                 itemBuilder: (context, index) {
                   if (index == state.posters.length) {
-                    // Display loading indicator at the bottom
                     return state is MovieLoading
                         ? const Center(child: CircularProgressIndicator())
                         : const SizedBox.shrink();
                   }
-
                   final posterUrl = state.posters[index];
                   return Card(
                     elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(4.0), // Rounded corners
-                    ),
                     child: CachedNetworkImage(
                       imageUrl: posterUrl,
                       placeholder: (context, url) =>
