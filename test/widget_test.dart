@@ -8,17 +8,15 @@ import 'package:movies/cubits/movie_cubit.dart';
 import 'package:movies/infrastructure/movie_service.dart';
 import 'package:movies/main.dart';
 
-class MockTMDbService extends Mock implements TMDbService {}
 
-@GenerateMocks([MockTMDbService])
-
+@GenerateMocks([TMDbService])
 void main() {
   late MovieCubit movieCubit;
-  late MockTMDbService mockTMDbService;
+  late TMDbService mockTMDbService;
 
   setUp(() {
-    mockTMDbService = MockTMDbService();
-    movieCubit = MovieCubit(mockTMDbService as TMDbService);
+    mockTMDbService = TMDbService();
+    movieCubit = MovieCubit(mockTMDbService);
   });
 
   testWidgets('Movie posters grid shows loading and then posters', (WidgetTester tester) async {
