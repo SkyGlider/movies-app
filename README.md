@@ -1,4 +1,4 @@
-# movies
+# Movie Posters
 
 A movie posters app
 
