@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class MovieRepository {
   static const String _apiKey =
-      '6489ad683fc50d1640cb90873c5343f9'; // TMDB API Key
+      'YOUR_TMDD_API_KEY'; // TMDB API Key
   static const String _baseUrl = 'https://api.themoviedb.org/3';
 
   // GET Request
