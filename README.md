@@ -32,3 +32,7 @@ Unit testing and widget testing are available in the /test folder.
 1. First run "dart run build_runner build" to generate the mocks (@GenerateMocks)
 2. Run unit tests in cubit_test.dart
 3. Run widget tests in widget-test.dart
+
+## Video recording
+
+https://github.com/user-attachments/assets/c392671f-cbe9-4733-a491-8786a58f7002
